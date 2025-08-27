@@ -83,7 +83,7 @@ namespace Maximum.Controllers
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Main");
                 }
                 
                 foreach (var error in result.Errors)
@@ -101,7 +101,7 @@ namespace Maximum.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Main");
         }
 
         // GET: /Account/Profile
@@ -125,7 +125,7 @@ namespace Maximum.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Main");
             }
         }
     }
