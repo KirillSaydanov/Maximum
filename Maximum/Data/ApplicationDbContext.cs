@@ -18,6 +18,18 @@ namespace Maximum.Data
             base.OnModelCreating(builder);
             
             // Дополнительная конфигурация модели, если потребуется
+
+            builder.Entity<Client>(entity =>
+            {
+                entity.Property(e => e.BirthDate)
+                    .HasColumnType("date");
+
+                entity.Property(e => e.CreatedAtUtc)
+                    .HasColumnType("timestamp with time zone");
+
+                entity.Property(e => e.UpdatedAtUtc)
+                    .HasColumnType("timestamp with time zone");
+            });
         }
     }
 }

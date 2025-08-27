@@ -19,7 +19,7 @@ namespace Maximum.Models
         public string? Email { get; set; }
 
         [DataType(DataType.Date)]
-        public DateTime? BirthDate { get; set; }
+        public DateOnly? BirthDate { get; set; }
 
         [StringLength(500)]
         public string? Notes { get; set; }
