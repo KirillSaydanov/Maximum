@@ -6,21 +6,26 @@ namespace Maximum.Models
     {
         public int Id { get; set; }
 
-        [Required]
-        [StringLength(100)]
+        [Required(ErrorMessage = "Поле обязательно")]
+        [StringLength(100, ErrorMessage = "Максимум 100 символов")]
+        [Display(Name = "ФИО")]
         public string FullName { get; set; } = string.Empty;
 
-        [StringLength(100)]
+        [StringLength(100, ErrorMessage = "Максимум 100 символов")]
+        [Display(Name = "Специализация")]
         public string? Specialty { get; set; }
 
-        [Phone]
-        [StringLength(30)]
+        [Phone(ErrorMessage = "Некорректный телефон")]
+        [StringLength(30, ErrorMessage = "Максимум 30 символов")]
+        [Display(Name = "Телефон")]
         public string? Phone { get; set; }
 
-        [EmailAddress]
-        [StringLength(100)]
+        [EmailAddress(ErrorMessage = "Некорректный Email")]
+        [StringLength(100, ErrorMessage = "Максимум 100 символов")]
+        [Display(Name = "Email")]
         public string? Email { get; set; }
 
+        [Display(Name = "Активен")]
         public bool IsActive { get; set; } = true;
     }
 }

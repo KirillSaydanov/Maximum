@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Maximum.Data;
 using Maximum.Models;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,6 +55,17 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+// Устанавливаем русскую культуру по умолчанию
+var ru = new CultureInfo("ru-RU");
+CultureInfo.DefaultThreadCurrentCulture = ru;
+CultureInfo.DefaultThreadCurrentUICulture = ru;
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture(ru),
+    SupportedCultures = new List<CultureInfo> { ru },
+    SupportedUICultures = new List<CultureInfo> { ru }
+});
 
 // Добавляем аутентификацию и авторизацию
 app.UseAuthentication();

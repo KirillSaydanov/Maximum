@@ -20,3 +20,136 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+/* ---------- Общие переменные и базовые стили ---------- */
+:root {
+  --mx-primary: #0d6efd;
+  --mx-secondary: #6c757d;
+  --mx-success: #198754;
+  --mx-danger: #dc3545;
+  --mx-warning: #ffc107;
+  --mx-info: #0dcaf0;
+  --mx-light: #f8f9fa;
+  --mx-dark: #212529;
+  --mx-border: #e5e7eb;
+}
+
+h1, h2, h3, h4, h5 {
+  font-weight: 600;
+}
+
+/* ---------- Навигация ---------- */
+.navbar {
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+
+.navbar-brand {
+  font-weight: 700;
+}
+
+/* ---------- Карточки ---------- */
+.card {
+  border: 1px solid var(--mx-border);
+  border-radius: .6rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.card .card-title {
+  font-weight: 600;
+}
+
+/* ---------- Таблицы ---------- */
+.table {
+  border-color: var(--mx-border);
+}
+
+.table thead th {
+  background: var(--mx-light);
+  font-weight: 600;
+  border-bottom: 1px solid var(--mx-border);
+}
+
+.table-hover tbody tr:hover {
+  background-color: #f6f8fb;
+}
+
+.table td, .table th {
+  vertical-align: middle;
+}
+
+/* ---------- Формы ---------- */
+.form-control, .form-select, .form-check-input {
+  border-radius: .5rem;
+  border-color: var(--mx-border);
+}
+
+.form-control:focus, .form-select:focus, .form-check-input:focus {
+  border-color: var(--mx-primary);
+  box-shadow: 0 0 0 .2rem rgba(13,110,253,.15);
+}
+
+label.form-label {
+  font-weight: 500;
+}
+
+.text-danger {
+  font-size: .9rem;
+}
+
+/* ---------- Кнопки ---------- */
+.btn {
+  border-radius: .5rem;
+}
+
+.btn-outline-primary {
+  border-color: var(--mx-primary);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--mx-primary);
+  color: #fff;
+}
+
+/* ---------- Бейджи ---------- */
+.badge {
+  font-weight: 600;
+}
+
+/* ---------- Контейнеры и отступы ---------- */
+.container, .container-fluid {
+  padding-top: .75rem;
+}
+
+main.pb-3 {
+  padding-bottom: 2rem !important;
+}
+
+/* ---------- Календарь (FullCalendar) ---------- */
+#calendar-container {
+  background: #fff;
+  border: 1px solid var(--mx-border);
+  border-radius: .6rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.fc .fc-toolbar-title {
+  font-weight: 700;
+}
+
+.fc .fc-button-primary {
+  background-color: var(--mx-primary);
+  border-color: var(--mx-primary);
+}
+
+.fc .fc-daygrid-day:hover {
+  background: #f9fafb;
+}
+
+.fc .fc-timegrid-slot:hover {
+  background: #f9fafb;
+}
+
+/* ---------- Формы создания записи в шапке календаря ---------- */
+form#createForm .form-select, form#createForm .form-control {
+  min-width: 180px;
+}

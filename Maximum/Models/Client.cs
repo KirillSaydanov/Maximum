@@ -6,22 +6,27 @@ namespace Maximum.Models
     {
         public int Id { get; set; }
 
-        [Required]
-        [StringLength(100)]
+        [Required(ErrorMessage = "Поле обязательно")]
+        [StringLength(100, ErrorMessage = "Максимум 100 символов")]
+        [Display(Name = "ФИО")]
         public string FullName { get; set; } = string.Empty;
 
-        [Phone]
-        [StringLength(30)]
+        [Phone(ErrorMessage = "Некорректный телефон")]
+        [StringLength(30, ErrorMessage = "Максимум 30 символов")]
+        [Display(Name = "Телефон")]
         public string? Phone { get; set; }
 
-        [EmailAddress]
-        [StringLength(100)]
+        [EmailAddress(ErrorMessage = "Некорректный Email")]
+        [StringLength(100, ErrorMessage = "Максимум 100 символов")]
+        [Display(Name = "Email")]
         public string? Email { get; set; }
 
         [DataType(DataType.Date)]
+        [Display(Name = "Дата рождения")]
         public DateOnly? BirthDate { get; set; }
 
-        [StringLength(500)]
+        [StringLength(500, ErrorMessage = "Максимум 500 символов")]
+        [Display(Name = "Заметки")]
         public string? Notes { get; set; }
 
         public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
