@@ -12,6 +12,8 @@ namespace Maximum.Data
         }
 
         public DbSet<Client> Clients { get; set; }
+        public DbSet<Employee> Employees { get; set; }
+        public DbSet<Appointment> Appointments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -29,6 +31,27 @@ namespace Maximum.Data
 
                 entity.Property(e => e.UpdatedAtUtc)
                     .HasColumnType("timestamp with time zone");
+            });
+
+            builder.Entity<Appointment>(entity =>
+            {
+                entity.HasOne(a => a.Client)
+                    .WithMany()
+                    .HasForeignKey(a => a.ClientId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(a => a.Employee)
+                    .WithMany()
+                    .HasForeignKey(a => a.EmployeeId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.Property(a => a.StartAtUtc)
+                    .HasColumnType("timestamp with time zone");
+
+                entity.Property(a => a.EndAtUtc)
+                    .HasColumnType("timestamp with time zone");
+
+                entity.HasIndex(a => new { a.EmployeeId, a.StartAtUtc, a.EndAtUtc });
             });
         }
     }

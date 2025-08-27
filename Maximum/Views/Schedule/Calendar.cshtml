@@ -1,0 +1,113 @@
+@{
+    ViewData["Title"] = "Календарь";
+    var employees = (IEnumerable<Maximum.Models.Employee>)ViewBag.Employees;
+    var clients = (IEnumerable<Maximum.Models.Client>)ViewBag.Clients;
+}
+
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css' rel='stylesheet'>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+
+<style>
+    body, html { height: 100%; }
+    #calendar-container { height: calc(100vh - 140px); }
+    #calendar { height: 100%; }
+</style>
+
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <select id="employeeFilter" class="form-select">
+                <option value="">Все сотрудники</option>
+                @foreach (var e in employees)
+                {
+                    <option value="@e.Id">@e.FullName (@e.Specialty)</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-9 text-end">
+            <form id="createForm" asp-action="Create" method="post" class="row g-2 justify-content-end">
+                <div class="col-auto">
+                    <select name="ClientId" class="form-select" required>
+                        <option value="">Клиент</option>
+                        @foreach (var c in clients)
+                        {
+                            <option value="@c.Id">@c.FullName</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <select name="EmployeeId" class="form-select" required>
+                        <option value="">Сотрудник</option>
+                        @foreach (var e in employees)
+                        {
+                            <option value="@e.Id">@e.FullName</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <input type="datetime-local" name="StartLocal" class="form-control" required />
+                </div>
+                <div class="col-auto">
+                    <input type="number" name="DurationMinutes" class="form-control" placeholder="Минуты" value="60" min="5" step="5" required />
+                </div>
+                <div class="col-auto">
+                    <input type="text" name="Title" class="form-control" placeholder="Тема" />
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">Создать</button>
+                </div>
+                @Html.AntiForgeryToken()
+            </form>
+        </div>
+    </div>
+
+    <div id="calendar-container" class="row">
+        <div id='calendar' class="col-12"></div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const calendarEl = document.getElementById('calendar');
+        const employeeFilter = document.getElementById('employeeFilter');
+
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            height: '100%',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+            },
+            locale: 'ru',
+            navLinks: true,
+            nowIndicator: true,
+            selectable: true,
+            selectMirror: true,
+            events: function (fetchInfo, successCallback, failureCallback) {
+                const params = new URLSearchParams({
+                    start: fetchInfo.startStr,
+                    end: fetchInfo.endStr
+                });
+                const empId = employeeFilter.value;
+                if (empId) params.append('employeeId', empId);
+                fetch(`/Schedule/Events?${params.toString()}`)
+                    .then(r => r.json())
+                    .then(data => successCallback(data))
+                    .catch(err => failureCallback(err));
+            },
+            dateClick: function (info) {
+                calendar.changeView('timeGridDay', info.dateStr);
+            },
+            eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
+        });
+
+        calendar.render();
+
+        employeeFilter.addEventListener('change', function () {
+            calendar.refetchEvents();
+        });
+    });
+</script>
+
+
