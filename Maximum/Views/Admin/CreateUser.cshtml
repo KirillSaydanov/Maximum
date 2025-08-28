@@ -1,0 +1,161 @@
+@model Maximum.Controllers.CreateUserViewModel
+@{
+    ViewData["Title"] = "Создание пользователя";
+}
+
+<div class="container-fluid">
+    <!-- Заголовок страницы -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex align-items-center mb-3">
+                <a href="@Url.Action("Users")" class="btn btn-outline-secondary me-3">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <div>
+                    <h1 class="display-6 text-danger mb-2">
+                        <i class="fas fa-user-plus me-3"></i>Создание пользователя
+                    </h1>
+                    <p class="text-muted mb-0">Добавление нового пользователя в систему</p>
+                </div>
+            </div>
+            <hr class="my-3">
+        </div>
+    </div>
+
+    <!-- Форма создания -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-edit me-2"></i>Информация о пользователе
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="CreateUser" method="post">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="FirstName" class="form-label">
+                                    <i class="fas fa-user me-2"></i>Имя <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="FirstName" class="form-control form-control-lg" placeholder="Введите имя" />
+                                <span asp-validation-for="FirstName" class="text-danger small"></span>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="LastName" class="form-label">
+                                    <i class="fas fa-user me-2"></i>Фамилия <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="LastName" class="form-control form-control-lg" placeholder="Введите фамилию" />
+                                <span asp-validation-for="LastName" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label">
+                                <i class="fas fa-envelope me-2"></i>Email <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="Email" type="email" class="form-control form-control-lg" placeholder="user@example.com" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Password" class="form-label">
+                                    <i class="fas fa-lock me-2"></i>Пароль <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="Password" type="password" class="form-control form-control-lg" placeholder="Минимум 6 символов" />
+                                <span asp-validation-for="Password" class="text-danger small"></span>
+                                <small class="text-muted">Пароль должен содержать минимум 6 символов</small>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ConfirmPassword" class="form-label">
+                                    <i class="fas fa-lock me-2"></i>Подтверждение пароля <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="ConfirmPassword" type="password" class="form-control form-control-lg" placeholder="Повторите пароль" />
+                                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-shield-alt me-2"></i>Роли пользователя
+                            </label>
+                            <div class="row">
+                                @foreach (var role in ViewBag.Roles)
+                                {
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="Roles" value="@role" id="role_@role" />
+                                            <label class="form-check-label" for="role_@role">
+                                                @if (role == "Admin")
+                                                {
+                                                    <span class="badge bg-danger me-2">@role</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-primary me-2">@role</span>
+                                                }
+                                                @role
+                                            </label>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            <small class="text-muted">Выберите роли для нового пользователя. Если роли не выбраны, пользователь получит роль "User" по умолчанию.</small>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a class="btn btn-outline-secondary btn-lg" asp-action="Users">
+                                <i class="fas fa-times me-2"></i>Отмена
+                            </a>
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="fas fa-save me-2"></i>Создать пользователя
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function() {
+            // Автофокус на первое поле
+            $('#FirstName').focus();
+            
+            // Валидация в реальном времени
+            $('input').on('input', function() {
+                var field = $(this);
+                var validationSpan = field.siblings('span[data-valmsg-for]');
+                
+                if (field.val().trim() === '') {
+                    field.addClass('is-invalid');
+                    validationSpan.show();
+                } else {
+                    field.removeClass('is-invalid');
+                    validationSpan.hide();
+                }
+            });
+            
+            // Проверка совпадения паролей
+            $('#ConfirmPassword').on('input', function() {
+                var password = $('#Password').val();
+                var confirmPassword = $(this).val();
+                var validationSpan = $(this).siblings('span[data-valmsg-for]');
+                
+                if (password !== confirmPassword) {
+                    $(this).addClass('is-invalid');
+                    validationSpan.text('Пароли не совпадают').show();
+                } else {
+                    $(this).removeClass('is-invalid');
+                    validationSpan.hide();
+                }
+            });
+        });
+    </script>
+}

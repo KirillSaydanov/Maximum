@@ -8,64 +8,194 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/locales-all.global.min.js'></script>
 
-<style>
-    body, html { height: 100%; }
-    #calendar-container { height: calc(100vh - 140px); }
-    #calendar { height: 100%; }
-</style>
-
 <div class="container-fluid">
-    <div class="row mb-3">
-        <div class="col-md-3">
-            <select id="employeeFilter" class="form-select">
-                <option value="">Все сотрудники</option>
-                @foreach (var e in employees)
-                {
-                    <option value="@e.Id">@e.FullName (@e.Specialty)</option>
-                }
-            </select>
-        </div>
-        <div class="col-md-9 text-end">
-            <form id="createForm" asp-action="Create" method="post" class="row g-2 justify-content-end">
-                <div class="col-auto">
-                    <select name="ClientId" class="form-select" required>
-                        <option value="">Клиент</option>
-                        @foreach (var c in clients)
-                        {
-                            <option value="@c.Id">@c.FullName</option>
-                        }
-                    </select>
+    <!-- Заголовок страницы -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex align-items-center mb-3">
+                <a href="@Url.Action("Index", "Main")" class="btn btn-outline-secondary me-3">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <div>
+                    <h1 class="display-6 text-info mb-2">
+                        <i class="fas fa-calendar-alt me-3"></i>Календарь записей
+                    </h1>
+                    <p class="text-muted mb-0">Планирование и управление записями пациентов</p>
                 </div>
-                <div class="col-auto">
-                    <select name="EmployeeId" class="form-select" required>
-                        <option value="">Сотрудник</option>
-                        @foreach (var e in employees)
-                        {
-                            <option value="@e.Id">@e.FullName</option>
-                        }
-                    </select>
-                </div>
-                <div class="col-auto">
-                    <input type="datetime-local" name="StartLocal" class="form-control" required />
-                </div>
-                <div class="col-auto">
-                    <input type="number" name="DurationMinutes" class="form-control" placeholder="Минуты" value="60" min="5" step="5" required />
-                </div>
-                <div class="col-auto">
-                    <input type="text" name="Title" class="form-control" placeholder="Тема" />
-                </div>
-                <div class="col-auto">
-                    <button type="submit" class="btn btn-primary">Создать</button>
-                </div>
-                @Html.AntiForgeryToken()
-            </form>
+            </div>
+            <hr class="my-3">
         </div>
     </div>
 
-    <div id="calendar-container" class="row">
-        <div id='calendar' class="col-12"></div>
+    <!-- Панель управления -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-cogs me-2"></i>Управление календарем
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row align-items-end">
+                        <!-- Фильтр по сотрудникам -->
+                        <div class="col-lg-3 mb-3">
+                            <label for="employeeFilter" class="form-label">
+                                <i class="fas fa-user-md me-2"></i>Фильтр по сотрудникам
+                            </label>
+                            <select id="employeeFilter" class="form-select form-select-lg">
+                                <option value="">Все сотрудники</option>
+                                @foreach (var e in employees.Where(emp => emp.IsActive))
+                                {
+                                    <option value="@e.Id">@e.FullName (@e.Specialty)</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Форма создания записи -->
+                        <div class="col-lg-9">
+                            <form id="createForm" asp-action="Create" method="post" class="row g-3">
+                                <div class="col-md-2">
+                                    <label class="form-label">
+                                        <i class="fas fa-user me-2"></i>Клиент
+                                    </label>
+                                    <select name="ClientId" class="form-select" required>
+                                        <option value="">Выберите клиента</option>
+                                        @foreach (var c in clients.OrderBy(cl => cl.FullName))
+                                        {
+                                            <option value="@c.Id">@c.FullName</option>
+                                        }
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-2">
+                                    <label class="form-label">
+                                        <i class="fas fa-user-md me-2"></i>Сотрудник
+                                    </label>
+                                    <select name="EmployeeId" class="form-select" required>
+                                        <option value="">Выберите сотрудника</option>
+                                        @foreach (var e in employees.Where(emp => emp.IsActive).OrderBy(emp => emp.FullName))
+                                        {
+                                            <option value="@e.Id">@e.FullName</option>
+                                        }
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-2">
+                                    <label class="form-label">
+                                        <i class="fas fa-clock me-2"></i>Дата и время
+                                    </label>
+                                    <input type="datetime-local" name="StartLocal" class="form-control" required />
+                                </div>
+                                
+                                <div class="col-md-2">
+                                    <label class="form-label">
+                                        <i class="fas fa-hourglass-half me-2"></i>Длительность
+                                    </label>
+                                    <select name="DurationMinutes" class="form-select">
+                                        <option value="30">30 минут</option>
+                                        <option value="60" selected>1 час</option>
+                                        <option value="90">1.5 часа</option>
+                                        <option value="120">2 часа</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-2">
+                                    <label class="form-label">
+                                        <i class="fas fa-tag me-2"></i>Тема
+                                    </label>
+                                    <input type="text" name="Title" class="form-control" placeholder="Тема приема" />
+                                </div>
+                                
+                                <div class="col-md-2">
+                                    <label class="form-label">&nbsp;</label>
+                                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                                        <i class="fas fa-plus me-2"></i>Создать
+                                    </button>
+                                </div>
+                                
+                                @Html.AntiForgeryToken()
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Календарь -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-calendar me-2"></i>Расписание записей
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div id="calendar-container" style="height: 600px;">
+                        <div id='calendar' style="height: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<style>
+    /* Стили для FullCalendar */
+    .fc .fc-toolbar-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--mx-primary);
+    }
+    
+    .fc .fc-button-primary {
+        background-color: var(--mx-primary);
+        border-color: var(--mx-primary);
+        border-radius: 0.5rem;
+    }
+    
+    .fc .fc-button-primary:hover {
+        background-color: #0b5ed7;
+        border-color: #0b5ed7;
+    }
+    
+    .fc .fc-button-primary:focus {
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+    
+    .fc .fc-daygrid-day:hover {
+        background-color: rgba(13, 110, 253, 0.05);
+    }
+    
+    .fc .fc-timegrid-slot:hover {
+        background-color: rgba(13, 110, 253, 0.05);
+    }
+    
+    .fc-event {
+        border-radius: 0.5rem;
+        border: none;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .fc-event:hover {
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    
+    /* Адаптивность для мобильных устройств */
+    @media (max-width: 768px) {
+        .fc .fc-toolbar {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .fc .fc-toolbar-chunk {
+            display: flex;
+            justify-content: center;
+        }
+    }
+</style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -92,29 +222,87 @@
             nowIndicator: true,
             selectable: true,
             selectMirror: true,
+            dayMaxEvents: true,
+            weekends: true,
             events: function (fetchInfo, successCallback, failureCallback) {
                 const params = new URLSearchParams({
                     start: fetchInfo.startStr,
                     end: fetchInfo.endStr
                 });
                 const empId = employeeFilter.value;
-                if (empId) params.append('employeeId', empId);
+                if (empId) {
+                    params.append('employeeId', empId);
+                }
+
                 fetch(`/Schedule/Events?${params.toString()}`)
-                    .then(r => r.json())
-                    .then(data => successCallback(data))
-                    .catch(err => failureCallback(err));
+                    .then(response => response.json())
+                    .then(data => {
+                        const events = data.map(item => ({
+                            id: item.id,
+                            title: item.title,
+                            start: item.start,
+                            end: item.end,
+                            extendedProps: item.extendedProps,
+                            backgroundColor: getEventColor(item.extendedProps.employeeId),
+                            borderColor: getEventColor(item.extendedProps.employeeId),
+                            textColor: '#ffffff'
+                        }));
+                        successCallback(events);
+                    })
+                    .catch(error => {
+                        console.error('Ошибка загрузки событий:', error);
+                        failureCallback(error);
+                    });
             },
-            dateClick: function (info) {
-                calendar.changeView('timeGridDay', info.dateStr);
+            select: function(info) {
+                // Автоматически заполняем дату и время при выборе в календаре
+                const startDate = new Date(info.start);
+                const endDate = new Date(info.end);
+                const duration = Math.round((endDate - startDate) / (1000 * 60));
+                
+                document.querySelector('input[name="StartLocal"]').value = 
+                    startDate.toISOString().slice(0, 16);
+                document.querySelector('select[name="DurationMinutes"]').value = duration;
             },
-            eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
+            eventClick: function(info) {
+                // Показать информацию о записи
+                showEventDetails(info.event);
+            }
         });
 
         calendar.render();
 
-        employeeFilter.addEventListener('change', function () {
+        // Обработчик изменения фильтра
+        employeeFilter.addEventListener('change', function() {
             calendar.refetchEvents();
         });
+
+        // Функция для определения цвета события по ID сотрудника
+        function getEventColor(employeeId) {
+            const colors = [
+                '#0d6efd', '#198754', '#ffc107', '#dc3545', 
+                '#6f42c1', '#fd7e14', '#20c997', '#e83e8c'
+            ];
+            return colors[employeeId % colors.length];
+        }
+
+        // Функция для отображения деталей записи
+        function showEventDetails(event) {
+            const props = event.extendedProps;
+            const details = `
+                <strong>Клиент:</strong> ${props.client}<br>
+                <strong>Сотрудник:</strong> ${props.employee}<br>
+                <strong>Время:</strong> ${event.start.toLocaleString('ru-RU')} - ${event.end.toLocaleString('ru-RU')}
+            `;
+            
+            // Можно использовать Bootstrap Modal или SweetAlert2 для красивого отображения
+            alert(details);
+        }
+
+        // Устанавливаем текущую дату и время в форму
+        const now = new Date();
+        const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+        document.querySelector('input[name="StartLocal"]').value = localDateTime.toISOString().slice(0, 16);
     });
 </script>
 
