@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Maximum.Models;
 using Maximum.Data;
 using Microsoft.EntityFrameworkCore;
@@ -55,49 +56,10 @@ namespace Maximum.Controllers
             return View(model);
         }
 
-        // GET: /Account/Register
-        [HttpGet]
-        public IActionResult Register()
-        {
-            return View();
-        }
-
-        // POST: /Account/Register
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = new ApplicationUser
-                {
-                    UserName = model.Email,
-                    Email = model.Email,
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    RegistrationDate = DateTime.UtcNow
-                };
-
-                var result = await _userManager.CreateAsync(user, model.Password);
-                
-                if (result.Succeeded)
-                {
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    return RedirectToAction("Index", "Main");
-                }
-                
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-            }
-
-            return View(model);
-        }
-
         // POST: /Account/Logout
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
@@ -106,6 +68,7 @@ namespace Maximum.Controllers
 
         // GET: /Account/Profile
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Profile()
         {
             var user = await _userManager.GetUserAsync(User);

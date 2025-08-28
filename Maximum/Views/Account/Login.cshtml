@@ -3,42 +3,82 @@
     ViewData["Title"] = "Вход в систему";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h2 class="text-center">@ViewData["Title"]</h2>
+<div class="container-fluid">
+    <div class="row justify-content-center align-items-center min-vh-100">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h2 class="mb-0">
+                        <i class="fas fa-tooth me-2"></i>Maximum
+                    </h2>
+                    <p class="mb-0 mt-2">Система управления стоматологической клиникой</p>
+                </div>
+                <div class="card-body p-4">
+                    <h4 class="text-center mb-4">Вход в систему</h4>
+                    
+                    <form asp-action="Login" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                        
+                        <div class="form-group mb-3">
+                            <label asp-for="Email" class="form-label">
+                                <i class="fas fa-envelope me-2"></i>Email
+                            </label>
+                            <input asp-for="Email" class="form-control form-control-lg" placeholder="Введите ваш email" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label asp-for="Password" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Пароль
+                            </label>
+                            <input asp-for="Password" class="form-control form-control-lg" placeholder="Введите пароль" />
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+                        
+                        <div class="form-group mb-4">
+                            <div class="form-check">
+                                <input asp-for="RememberMe" class="form-check-input" />
+                                <label asp-for="RememberMe" class="form-check-label">Запомнить меня</label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>Войти в систему
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="mt-4 text-center">
+                        <p class="text-muted mb-0">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Для входа используйте предоставленные учетные данные
+                        </p>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <form asp-action="Login" method="post">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    
-                    <div class="form-group mb-3">
-                        <label asp-for="Email" class="form-label">Email</label>
-                        <input asp-for="Email" class="form-control" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
-                    
-                    <div class="form-group mb-3">
-                        <label asp-for="Password" class="form-label">Пароль</label>
-                        <input asp-for="Password" class="form-control" />
-                        <span asp-validation-for="Password" class="text-danger"></span>
-                    </div>
-                    
-                    <div class="form-group mb-3">
-                        <div class="form-check">
-                            <input asp-for="RememberMe" class="form-check-input" />
-                            <label asp-for="RememberMe" class="form-check-label">Запомнить меня</label>
+            
+            <!-- Информация о системе -->
+            <div class="text-center mt-4">
+                <div class="row">
+                    <div class="col-4">
+                        <div class="text-primary">
+                            <i class="fas fa-users fa-2x mb-2"></i>
+                            <p class="small mb-0">Клиенты</p>
                         </div>
                     </div>
-                    
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary">Войти</button>
+                    <div class="col-4">
+                        <div class="text-success">
+                            <i class="fas fa-user-md fa-2x mb-2"></i>
+                            <p class="small mb-0">Сотрудники</p>
+                        </div>
                     </div>
-                </form>
-                
-                <div class="mt-3 text-center">
-                    <p>Нет аккаунта? <a asp-action="Register">Зарегистрироваться</a></p>
+                    <div class="col-4">
+                        <div class="text-info">
+                            <i class="fas fa-calendar-alt fa-2x mb-2"></i>
+                            <p class="small mb-0">Расписание</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

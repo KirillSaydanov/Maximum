@@ -71,8 +71,60 @@ app.UseRequestLocalization(new RequestLocalizationOptions
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Инициализация супер-админа
+using (var scope = app.Services.CreateScope())
+{
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    
+    // Создаем роль администратора
+    if (!await roleManager.RoleExistsAsync("Admin"))
+    {
+        await roleManager.CreateAsync(new IdentityRole("Admin"));
+    }
+    
+    // Создаем роль пользователя
+    if (!await roleManager.RoleExistsAsync("User"))
+    {
+        await roleManager.CreateAsync(new IdentityRole("User"));
+    }
+    
+    // Создаем супер-админа
+    var adminEmail = "admin@maximum.local";
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+    
+    if (adminUser == null)
+    {
+        adminUser = new ApplicationUser
+        {
+            UserName = adminEmail,
+            Email = adminEmail,
+            FirstName = "Супер",
+            LastName = "Администратор",
+            EmailConfirmed = true,
+            IsActive = true,
+            RegistrationDate = DateTime.UtcNow
+        };
+        
+        var result = await userManager.CreateAsync(adminUser, "Admin123!");
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(adminUser, "Admin");
+            Console.WriteLine("Супер-администратор создан успешно!");
+        }
+        else
+        {
+            Console.WriteLine("Ошибка создания супер-администратора:");
+            foreach (var error in result.Errors)
+            {
+                Console.WriteLine(error.Description);
+            }
+        }
+    }
+}
+
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Account}/{action=Login}/{id?}");
+    pattern: "{controller=Main}/{action=Index}/{id?}");
 
 app.Run();

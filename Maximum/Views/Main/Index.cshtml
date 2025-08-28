@@ -1,7 +1,177 @@
 @{
-    ViewData["Title"] = "Главная";
+    ViewData["Title"] = "Главная - Maximum";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Добро пожаловать в Maximum</h1>
+<div class="container-fluid">
+    <!-- Заголовок -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="text-center">
+                <h1 class="display-4 text-primary mb-3">Добро пожаловать в Maximum</h1>
+                <p class="lead text-muted">Система управления стоматологической клиникой</p>
+                <hr class="my-4">
+            </div>
+        </div>
+    </div>
+
+    <!-- Основные модули -->
+    <div class="row mb-4">
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card h-100 shadow-sm border-0 dashboard-card">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-users fa-3x text-primary dashboard-icon"></i>
+                    </div>
+                    <h5 class="card-title">Клиенты</h5>
+                    <p class="card-text text-muted">Управление базой клиентов, их данными и историей</p>
+                    <a href="@Url.Action("Index", "Clients")" class="btn btn-primary btn-sm">
+                        <i class="fas fa-arrow-right me-2"></i>Перейти
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card h-100 shadow-sm border-0 dashboard-card">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-user-md fa-3x text-success dashboard-icon"></i>
+                    </div>
+                    <h5 class="card-title">Сотрудники</h5>
+                    <p class="card-text text-muted">Управление персоналом и специалистами клиники</p>
+                    <a href="@Url.Action("Index", "Employees")" class="btn btn-success btn-sm">
+                        <i class="fas fa-arrow-right me-2"></i>Перейти
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card h-100 shadow-sm border-0 dashboard-card">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-calendar-alt fa-3x text-info dashboard-icon"></i>
+                    </div>
+                    <h5 class="card-title">Расписание</h5>
+                    <p class="card-text text-muted">Планирование и управление записями пациентов</p>
+                    <a href="@Url.Action("Calendar", "Schedule")" class="btn btn-info btn-sm">
+                        <i class="fas fa-arrow-right me-2"></i>Перейти
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card h-100 shadow-sm border-0 dashboard-card">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-user-circle fa-3x text-warning dashboard-icon"></i>
+                    </div>
+                    <h5 class="card-title">Профиль</h5>
+                    <p class="card-text text-muted">Управление личным профилем и настройками</p>
+                    <a href="@Url.Action("Profile", "Account")" class="btn btn-warning btn-sm">
+                        <i class="fas fa-arrow-right me-2"></i>Перейти
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Статистика -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm stats-card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>Краткая статистика
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3 mb-3">
+                            <div class="border-end">
+                                <h4 class="text-primary mb-1 stats-number" id="clientsCount">-</h4>
+                                <small class="text-muted">Всего клиентов</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="border-end">
+                                <h4 class="text-success mb-1 stats-number" id="employeesCount">-</h4>
+                                <small class="text-muted">Активных сотрудников</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="border-end">
+                                <h4 class="text-info mb-1 stats-number" id="appointmentsCount">-</h4>
+                                <small class="text-muted">Записей на сегодня</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div>
+                                <h4 class="text-warning mb-1 stats-number" id="upcomingCount">-</h4>
+                                <small class="text-muted">Предстоящих записей</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Быстрые действия -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>Быстрые действия
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <a href="@Url.Action("Create", "Clients")" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-plus me-2"></i>Добавить нового клиента
+                            </a>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <a href="@Url.Action("Create", "Employees")" class="btn btn-outline-success w-100">
+                                <i class="fas fa-plus me-2"></i>Добавить сотрудника
+                            </a>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <a href="@Url.Action("Calendar", "Schedule")" class="btn btn-outline-info w-100">
+                                <i class="fas fa-calendar-plus me-2"></i>Создать запись
+                            </a>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-outline-danger w-100">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Выйти из системы
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        // Загрузка статистики при загрузке страницы
+        $(document).ready(function() {
+            loadStatistics();
+        });
+
+        function loadStatistics() {
+            // Здесь можно добавить AJAX-запросы для получения реальной статистики
+            // Пока используем заглушки
+            $('#clientsCount').text('0');
+            $('#employeesCount').text('0');
+            $('#appointmentsCount').text('0');
+            $('#upcomingCount').text('0');
+        }
+    </script>
+}

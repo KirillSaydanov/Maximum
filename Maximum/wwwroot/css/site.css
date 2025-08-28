@@ -99,57 +99,72 @@ label.form-label {
 /* ---------- Кнопки ---------- */
 .btn {
   border-radius: .5rem;
+  font-weight: 500;
 }
 
-.btn-outline-primary {
-  border-color: var(--mx-primary);
+.btn-lg {
+  padding: .75rem 1.5rem;
+  font-size: 1.1rem;
 }
 
-.btn-outline-primary:hover {
-  background-color: var(--mx-primary);
-  color: #fff;
+/* ---------- Страница входа ---------- */
+.min-vh-100 {
+  min-height: 100vh;
 }
 
-/* ---------- Бейджи ---------- */
-.badge {
-  font-weight: 600;
+.login-page {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
 }
 
-/* ---------- Контейнеры и отступы ---------- */
-.container, .container-fluid {
-  padding-top: .75rem;
+.login-card {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
 }
 
-main.pb-3 {
-  padding-bottom: 2rem !important;
+/* ---------- Главная страница ---------- */
+.dashboard-card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
-/* ---------- Календарь (FullCalendar) ---------- */
-#calendar-container {
-  background: #fff;
-  border: 1px solid var(--mx-border);
-  border-radius: .6rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
 }
 
-.fc .fc-toolbar-title {
+.dashboard-icon {
+  transition: transform 0.2s ease-in-out;
+}
+
+.dashboard-card:hover .dashboard-icon {
+  transform: scale(1.1);
+}
+
+/* ---------- Статистика ---------- */
+.stats-card {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: none;
+}
+
+.stats-number {
+  font-size: 2.5rem;
   font-weight: 700;
+  line-height: 1;
 }
 
-.fc .fc-button-primary {
-  background-color: var(--mx-primary);
-  border-color: var(--mx-primary);
-}
-
-.fc .fc-daygrid-day:hover {
-  background: #f9fafb;
-}
-
-.fc .fc-timegrid-slot:hover {
-  background: #f9fafb;
-}
-
-/* ---------- Формы создания записи в шапке календаря ---------- */
-form#createForm .form-select, form#createForm .form-control {
-  min-width: 180px;
+/* ---------- Адаптивность ---------- */
+@media (max-width: 768px) {
+  .container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .stats-number {
+    font-size: 2rem;
+  }
+  
+  .btn-lg {
+    padding: .5rem 1rem;
+    font-size: 1rem;
+  }
 }
