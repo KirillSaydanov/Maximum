@@ -29,26 +29,39 @@ namespace Maximum.Controllers
         // GET: /Admin/Users
         public async Task<IActionResult> Users()
         {
-            var users = await _userManager.Users
-                .Select(u => new UserViewModel
-                {
-                    Id = u.Id,
-                    Email = u.Email,
-                    FirstName = u.FirstName,
-                    LastName = u.LastName,
-                    IsActive = u.IsActive,
-                    RegistrationDate = u.RegistrationDate,
-                    Roles = _userManager.GetRolesAsync(u).Result.ToList()
-                })
-                .ToListAsync();
+            var users = await _userManager.Users.ToListAsync().ConfigureAwait(false);
+            var userViewModels = new List<UserViewModel>();
 
-            return View(users);
+            // Получаем роли для всех пользователей одним запросом
+            var userRoles = new Dictionary<string, List<string>>();
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
+                userRoles[user.Id] = roles.ToList();
+            }
+
+            foreach (var user in users)
+            {
+                userViewModels.Add(new UserViewModel
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    IsActive = user.IsActive,
+                    RegistrationDate = user.RegistrationDate,
+                    Roles = userRoles[user.Id]
+                });
+            }
+
+            return View(userViewModels);
         }
 
         // GET: /Admin/CreateUser
-        public IActionResult CreateUser()
+        public async Task<IActionResult> CreateUser()
         {
-            ViewBag.Roles = _roleManager.Roles.Select(r => r.Name).ToList();
+            var roles = await _roleManager.Roles.Select(r => r.Name).ToListAsync().ConfigureAwait(false);
+            ViewBag.Roles = roles;
             return View();
         }
 
@@ -70,14 +83,19 @@ namespace Maximum.Controllers
                     RegistrationDate = DateTime.UtcNow
                 };
 
-                var result = await _userManager.CreateAsync(user, model.Password);
+                var result = await _userManager.CreateAsync(user, model.Password).ConfigureAwait(false);
                 
                 if (result.Succeeded)
                 {
                     // Добавляем роли
                     if (model.Roles != null && model.Roles.Any())
                     {
-                        await _userManager.AddToRolesAsync(user, model.Roles);
+                        await _userManager.AddToRolesAsync(user, model.Roles).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        // Если роли не выбраны, назначаем роль "User" по умолчанию
+                        await _userManager.AddToRoleAsync(user, "User").ConfigureAwait(false);
                     }
 
                     TempData["SuccessMessage"] = "Пользователь успешно создан!";
@@ -90,21 +108,28 @@ namespace Maximum.Controllers
                 }
             }
 
-            ViewBag.Roles = _roleManager.Roles.Select(r => r.Name).ToList();
+            var roles = await _roleManager.Roles.Select(r => r.Name).ToListAsync().ConfigureAwait(false);
+            ViewBag.Roles = roles;
             return View(model);
         }
 
         // GET: /Admin/EditUser
         public async Task<IActionResult> EditUser(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _userManager.FindByIdAsync(id).ConfigureAwait(false);
             if (user == null)
             {
                 return NotFound();
             }
 
-            var userRoles = await _userManager.GetRolesAsync(user);
-            var allRoles = await _roleManager.Roles.Select(r => r.Name).ToListAsync();
+            // Получаем роли пользователя и все доступные роли параллельно
+            var userRolesTask = _userManager.GetRolesAsync(user).ConfigureAwait(false);
+            var allRolesTask = _roleManager.Roles.Select(r => r.Name).ToListAsync().ConfigureAwait(false);
+
+            await Task.WhenAll(userRolesTask, allRolesTask);
+
+            var userRoles = userRolesTask.Result;
+            var allRoles = allRolesTask.Result;
 
             var model = new EditUserViewModel
             {
@@ -127,7 +152,7 @@ namespace Maximum.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByIdAsync(model.Id);
+                var user = await _userManager.FindByIdAsync(model.Id).ConfigureAwait(false);
                 if (user == null)
                 {
                     return NotFound();
@@ -137,23 +162,23 @@ namespace Maximum.Controllers
                 user.LastName = model.LastName;
                 user.IsActive = model.IsActive;
 
-                var result = await _userManager.UpdateAsync(user);
+                var result = await _userManager.UpdateAsync(user).ConfigureAwait(false);
                 
                 if (result.Succeeded)
                 {
                     // Обновляем роли
-                    var currentRoles = await _userManager.GetRolesAsync(user);
+                    var currentRoles = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
                     var rolesToRemove = currentRoles.Except(model.Roles ?? new List<string>());
                     var rolesToAdd = (model.Roles ?? new List<string>()).Except(currentRoles);
 
                     if (rolesToRemove.Any())
                     {
-                        await _userManager.RemoveFromRolesAsync(user, rolesToRemove);
+                        await _userManager.RemoveFromRolesAsync(user, rolesToRemove).ConfigureAwait(false);
                     }
 
                     if (rolesToAdd.Any())
                     {
-                        await _userManager.AddToRolesAsync(user, rolesToAdd);
+                        await _userManager.AddToRolesAsync(user, rolesToAdd).ConfigureAwait(false);
                     }
 
                     TempData["SuccessMessage"] = "Пользователь успешно обновлен!";
@@ -166,6 +191,8 @@ namespace Maximum.Controllers
                 }
             }
 
+            var roles = await _roleManager.Roles.Select(r => r.Name).ToListAsync().ConfigureAwait(false);
+            ViewBag.Roles = roles;
             return View(model);
         }
 
@@ -174,7 +201,7 @@ namespace Maximum.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteUser(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _userManager.FindByIdAsync(id).ConfigureAwait(false);
             if (user == null)
             {
                 return NotFound();
@@ -187,7 +214,7 @@ namespace Maximum.Controllers
                 return RedirectToAction(nameof(Users));
             }
 
-            var result = await _userManager.DeleteAsync(user);
+            var result = await _userManager.DeleteAsync(user).ConfigureAwait(false);
             
             if (result.Succeeded)
             {
@@ -204,16 +231,28 @@ namespace Maximum.Controllers
         // GET: /Admin/Roles
         public async Task<IActionResult> Roles()
         {
-            var roles = await _roleManager.Roles
-                .Select(r => new RoleViewModel
-                {
-                    Id = r.Id,
-                    Name = r.Name,
-                    UserCount = _userManager.GetUsersInRoleAsync(r.Name).Result.Count
-                })
-                .ToListAsync();
+            var roles = await _roleManager.Roles.ToListAsync().ConfigureAwait(false);
+            var roleViewModels = new List<RoleViewModel>();
 
-            return View(roles);
+            // Получаем количество пользователей для всех ролей
+            var roleUserCounts = new Dictionary<string, int>();
+            foreach (var role in roles)
+            {
+                var users = await _userManager.GetUsersInRoleAsync(role.Name).ConfigureAwait(false);
+                roleUserCounts[role.Name] = users.Count;
+            }
+
+            foreach (var role in roles)
+            {
+                roleViewModels.Add(new RoleViewModel
+                {
+                    Id = role.Id,
+                    Name = role.Name,
+                    UserCount = roleUserCounts[role.Name]
+                });
+            }
+
+            return View(roleViewModels);
         }
 
         // POST: /Admin/CreateRole
@@ -223,9 +262,9 @@ namespace Maximum.Controllers
         {
             if (!string.IsNullOrWhiteSpace(roleName))
             {
-                if (!await _roleManager.RoleExistsAsync(roleName))
+                if (!await _roleManager.RoleExistsAsync(roleName).ConfigureAwait(false))
                 {
-                    var result = await _roleManager.CreateAsync(new IdentityRole(roleName));
+                    var result = await _roleManager.CreateAsync(new IdentityRole(roleName)).ConfigureAwait(false);
                     if (result.Succeeded)
                     {
                         TempData["SuccessMessage"] = "Роль успешно создана!";
@@ -238,6 +277,50 @@ namespace Maximum.Controllers
                 else
                 {
                     TempData["ErrorMessage"] = "Роль с таким именем уже существует!";
+                }
+            }
+
+            return RedirectToAction(nameof(Roles));
+        }
+
+        // POST: /Admin/DeleteRole
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteRole(string roleName)
+        {
+            if (!string.IsNullOrWhiteSpace(roleName))
+            {
+                // Защищаем системные роли
+                if (roleName == "Admin" || roleName == "User")
+                {
+                    TempData["ErrorMessage"] = "Нельзя удалить системные роли!";
+                    return RedirectToAction(nameof(Roles));
+                }
+
+                var role = await _roleManager.FindByNameAsync(roleName).ConfigureAwait(false);
+                if (role != null)
+                {
+                    var usersInRole = await _userManager.GetUsersInRoleAsync(roleName).ConfigureAwait(false);
+                    if (usersInRole.Count == 0)
+                    {
+                        var result = await _roleManager.DeleteAsync(role).ConfigureAwait(false);
+                        if (result.Succeeded)
+                        {
+                            TempData["SuccessMessage"] = "Роль успешно удалена!";
+                        }
+                        else
+                        {
+                            TempData["ErrorMessage"] = "Ошибка при удалении роли!";
+                        }
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Нельзя удалить роль, которая назначена пользователям!";
+                    }
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Роль не найдена!";
                 }
             }
 
