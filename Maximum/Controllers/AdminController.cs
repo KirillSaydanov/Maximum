@@ -123,8 +123,8 @@ namespace Maximum.Controllers
             }
 
             // Получаем роли пользователя и все доступные роли параллельно
-            var userRolesTask = _userManager.GetRolesAsync(user).ConfigureAwait(false);
-            var allRolesTask = _roleManager.Roles.Select(r => r.Name).ToListAsync().ConfigureAwait(false);
+            var userRolesTask = _userManager.GetRolesAsync(user);
+            var allRolesTask = _roleManager.Roles.Select(r => r.Name).ToListAsync();
 
             await Task.WhenAll(userRolesTask, allRolesTask);
 
