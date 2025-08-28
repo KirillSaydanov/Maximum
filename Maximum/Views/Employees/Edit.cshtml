@@ -3,40 +3,140 @@
     ViewData["Title"] = "Редактирование сотрудника";
 }
 
-<h2>Редактирование сотрудника</h2>
+<div class="container-fluid">
+    <!-- Заголовок страницы -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex align-items-center mb-3">
+                <a href="@Url.Action("Index")" class="btn btn-outline-secondary me-3">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <div>
+                    <h1 class="display-6 text-success mb-2">
+                        <i class="fas fa-edit me-3"></i>Редактирование сотрудника
+                    </h1>
+                    <p class="text-muted mb-0">Изменение информации о сотруднике</p>
+                </div>
+            </div>
+            <hr class="my-3">
+        </div>
+    </div>
 
-<form asp-action="Edit" method="post">
-    <input type="hidden" asp-for="Id" />
-    <div class="mb-3">
-        <label asp-for="FullName" class="form-label"></label>
-        <input asp-for="FullName" class="form-control" />
-        <span asp-validation-for="FullName" class="text-danger"></span>
+    <!-- Форма редактирования -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user-edit me-2"></i>Информация о сотруднике
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="FullName" class="form-label">
+                                    <i class="fas fa-user me-2"></i>Полное имя <span class="text-danger">*</span>
+                                </label>
+                                <input asp-for="FullName" class="form-control form-control-lg" placeholder="Введите полное имя" />
+                                <span asp-validation-for="FullName" class="text-danger small"></span>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Specialty" class="form-label">
+                                    <i class="fas fa-stethoscope me-2"></i>Специализация <span class="text-danger">*</span>
+                                </label>
+                                <select asp-for="Specialty" class="form-select form-select-lg">
+                                    <option value="">Выберите специализацию</option>
+                                    <option value="Стоматолог-терапевт">Стоматолог-терапевт</option>
+                                    <option value="Стоматолог-хирург">Стоматолог-хирург</option>
+                                    <option value="Стоматолог-ортопед">Стоматолог-ортопед</option>
+                                    <option value="Ортодонт">Ортодонт</option>
+                                    <option value="Гигиенист">Гигиенист</option>
+                                    <option value="Ассистент">Ассистент</option>
+                                    <option value="Медсестра">Медсестра</option>
+                                    <option value="Администратор">Администратор</option>
+                                </select>
+                                <span asp-validation-for="Specialty" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Phone" class="form-label">
+                                    <i class="fas fa-phone me-2"></i>Телефон
+                                </label>
+                                <input asp-for="Phone" class="form-control form-control-lg" placeholder="+7 (999) 123-45-67" />
+                                <span asp-validation-for="Phone" class="text-danger small"></span>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Email" class="form-label">
+                                    <i class="fas fa-envelope me-2"></i>Email
+                                </label>
+                                <input asp-for="Email" type="email" class="form-control form-control-lg" placeholder="employee@clinic.com" />
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" asp-for="IsActive" id="isActiveSwitch" />
+                                <label class="form-check-label" for="isActiveSwitch">
+                                    <i class="fas fa-toggle-on me-2"></i>Сотрудник активен
+                                </label>
+                            </div>
+                            <small class="text-muted">Активные сотрудники могут принимать пациентов и отображаются в расписании</small>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a class="btn btn-outline-secondary btn-lg" asp-action="Index">
+                                <i class="fas fa-times me-2"></i>Отмена
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-save me-2"></i>Сохранить изменения
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="mb-3">
-        <label asp-for="Specialty" class="form-label"></label>
-        <input asp-for="Specialty" class="form-control" />
-        <span asp-validation-for="Specialty" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Phone" class="form-label"></label>
-        <input asp-for="Phone" class="form-control" />
-        <span asp-validation-for="Phone" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="Email" class="form-label"></label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-    <div class="form-check mb-3">
-        <input class="form-check-input" asp-for="IsActive" />
-        <label class="form-check-label" asp-for="IsActive"></label>
-    </div>
-    <button type="submit" class="btn btn-primary">Сохранить</button>
-    <a class="btn btn-secondary" asp-action="Index">Отмена</a>
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function() {
+            // Автофокус на первое поле
+            $('#FullName').focus();
+            
+            // Валидация в реальном времени
+            $('input, select').on('input change', function() {
+                var field = $(this);
+                var validationSpan = field.siblings('span[data-valmsg-for]');
+                
+                if (field.val().trim() === '') {
+                    field.addClass('is-invalid');
+                    validationSpan.show();
+                } else {
+                    field.removeClass('is-invalid');
+                    validationSpan.hide();
+                }
+            });
+            
+            // Анимация для переключателя
+            $('#isActiveSwitch').on('change', function() {
+                if ($(this).is(':checked')) {
+                    $(this).parent().addClass('text-success');
+                } else {
+                    $(this).parent().removeClass('text-success');
+                }
+            });
+        });
+    </script>
 }
 
 

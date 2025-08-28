@@ -152,6 +152,43 @@ label.form-label {
   line-height: 1;
 }
 
+/* ---------- Аватары и иконки ---------- */
+.avatar-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.avatar-large {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+}
+
+/* ---------- Переключатели ---------- */
+.form-check-input:checked {
+  background-color: var(--mx-success);
+  border-color: var(--mx-success);
+}
+
+.form-switch .form-check-input {
+  width: 3rem;
+  height: 1.5rem;
+}
+
+/* ---------- Анимации ---------- */
+.table-active {
+  background-color: rgba(13, 110, 253, 0.1) !important;
+}
+
 /* ---------- Адаптивность ---------- */
 @media (max-width: 768px) {
   .container-fluid {
@@ -166,5 +203,17 @@ label.form-label {
   .btn-lg {
     padding: .5rem 1rem;
     font-size: 1rem;
+  }
+  
+  .avatar-circle {
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
+  }
+  
+  .avatar-large {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
   }
 }

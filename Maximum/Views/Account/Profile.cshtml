@@ -3,58 +3,198 @@
     ViewData["Title"] = "Профиль";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h2 class="text-center">@ViewData["Title"]</h2>
+<div class="container-fluid">
+    <!-- Заголовок страницы -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex align-items-center mb-3">
+                <a href="@Url.Action("Index", "Main")" class="btn btn-outline-secondary me-3">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <div>
+                    <h1 class="display-6 text-warning mb-2">
+                        <i class="fas fa-user-circle me-3"></i>Мой профиль
+                    </h1>
+                    <p class="text-muted mb-0">Управление личным профилем и настройками</p>
+                </div>
             </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <dl class="row">
-                            <dt class="col-sm-4">Имя:</dt>
-                            <dd class="col-sm-8">@Model.FirstName</dd>
-                            
-                            <dt class="col-sm-4">Фамилия:</dt>
-                            <dd class="col-sm-8">@Model.LastName</dd>
-                            
-                            <dt class="col-sm-4">Email:</dt>
-                            <dd class="col-sm-8">@Model.Email</dd>
-                            
-                            <dt class="col-sm-4">Дата регистрации:</dt>
-                            <dd class="col-sm-8">@Model.RegistrationDate.ToString("dd.MM.yyyy")</dd>
-                            
-                            <dt class="col-sm-4">Статус:</dt>
-                            <dd class="col-sm-8">
-                                @if (Model.IsActive)
-                                {
-                                    <span class="badge bg-success">Активен</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-danger">Неактивен</span>
-                                }
-                            </dd>
-                        </dl>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="text-center">
-                            <div class="mb-3">
-                                <i class="fas fa-user-circle fa-5x text-primary"></i>
+            <hr class="my-3">
+        </div>
+    </div>
+
+    <!-- Информация профиля -->
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="row">
+                <!-- Основная информация -->
+                <div class="col-lg-8 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">
+                                <i class="fas fa-info-circle me-2"></i>Основная информация
+                            </h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted">
+                                        <i class="fas fa-user me-2"></i>Имя
+                                    </label>
+                                    <div class="form-control-plaintext">
+                                        <strong>@(Model.FirstName ?? "Не указано")</strong>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted">
+                                        <i class="fas fa-user me-2"></i>Фамилия
+                                    </label>
+                                    <div class="form-control-plaintext">
+                                        <strong>@(Model.LastName ?? "Не указано")</strong>
+                                    </div>
+                                </div>
                             </div>
-                            <p class="text-muted">Добро пожаловать в систему!</p>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted">
+                                        <i class="fas fa-envelope me-2"></i>Email
+                                    </label>
+                                    <div class="form-control-plaintext">
+                                        <strong>@Model.Email</strong>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted">
+                                        <i class="fas fa-calendar me-2"></i>Дата регистрации
+                                    </label>
+                                    <div class="form-control-plaintext">
+                                        <strong>@Model.RegistrationDate.ToString("dd.MM.yyyy")</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label text-muted">
+                                    <i class="fas fa-toggle-on me-2"></i>Статус аккаунта
+                                </label>
+                                <div class="form-control-plaintext">
+                                    @if (Model.IsActive)
+                                    {
+                                        <span class="badge bg-success fs-6">
+                                            <i class="fas fa-check me-1"></i>Активен
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger fs-6">
+                                            <i class="fas fa-times me-1"></i>Неактивен
+                                        </span>
+                                    }
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
-                <div class="mt-4 text-center">
-                    <form asp-action="Logout" method="post" style="display: inline;">
-                        <button type="submit" class="btn btn-danger">Выйти</button>
-                    </form>
-                    <a asp-controller="Main" asp-action="Index" class="btn btn-secondary">На главную</a>
+
+                <!-- Аватар и действия -->
+                <div class="col-lg-4 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">
+                                <i class="fas fa-user-edit me-2"></i>Действия
+                            </h5>
+                        </div>
+                        <div class="card-body p-4 text-center">
+                            <div class="mb-4">
+                                <div class="avatar-large bg-warning text-white mx-auto mb-3">
+                                    <i class="fas fa-user fa-3x"></i>
+                                </div>
+                                <h5 class="mb-1">@(Model.FirstName ?? "Пользователь") @(Model.LastName ?? "")</h5>
+                                <p class="text-muted mb-0">Добро пожаловать в систему Maximum!</p>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <a asp-controller="Main" asp-action="Index" class="btn btn-outline-primary">
+                                    <i class="fas fa-home me-2"></i>На главную
+                                </a>
+                                <form asp-action="Logout" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-outline-danger w-100">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Выйти из системы
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Статистика активности -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-line me-2"></i>Статистика активности
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-md-3 mb-3">
+                                    <div class="border-end">
+                                        <h4 class="text-primary mb-1 stats-number">@Model.RegistrationDate.DayOfYear</h4>
+                                        <small class="text-muted">День в году регистрации</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="border-end">
+                                        <h4 class="text-success mb-1 stats-number">@DateTime.Now.Subtract(Model.RegistrationDate).Days</h4>
+                                        <small class="text-muted">Дней в системе</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div class="border-end">
+                                        <h4 class="text-info mb-1 stats-number">@Model.RegistrationDate.ToString("MM")</h4>
+                                        <small class="text-muted">Месяц регистрации</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <div>
+                                        <h4 class="text-warning mb-1 stats-number">@Model.RegistrationDate.Year</h4>
+                                        <small class="text-muted">Год регистрации</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Анимация для статистики
+            $('.stats-number').each(function() {
+                var $this = $(this);
+                var countTo = $this.text();
+                
+                $({ countNum: 0 }).animate({
+                    countNum: countTo
+                }, {
+                    duration: 1000,
+                    easing: 'swing',
+                    step: function() {
+                        $this.text(Math.floor(this.countNum));
+                    },
+                    complete: function() {
+                        $this.text(countTo);
+                    }
+                });
+            });
+        });
+    </script>
+}
